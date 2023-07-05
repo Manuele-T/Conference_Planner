@@ -1,11 +1,11 @@
-const nedb = require("nedb");
+//const nedb = require("nedb");
+const nedb = require("gray-nedb");
 
 class Orders {
   constructor(orderFilePath) {
     console.log(orderFilePath);
     if (orderFilePath) {
       this.order = new nedb(orderFilePath);
-      console.log("order connected to " + orderFilePath);
       orderFilePath;
     } else {
       this.order = new nedb();

@@ -1,11 +1,11 @@
-const nedb = require("nedb");
+//const nedb = require("nedb");
+const nedb = require("gray-nedb");
 
 class Menu {
   constructor(menuFilePath) {
     console.log(menuFilePath);
     if (menuFilePath) {
       this.menu = new nedb(menuFilePath);
-      console.log("menu connected to " + menuFilePath);
       menuFilePath;
     } else {
       this.menu = new nedb();
