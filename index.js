@@ -13,9 +13,6 @@ require('./config/passport')(passport);
 
 app.use(cors());
 
-// const bodyParser  = require('body-parser');
-// app.use(bodyParser.json());
-// app.use(express.urlencoded({extended: false }));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));

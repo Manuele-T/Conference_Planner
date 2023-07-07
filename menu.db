@@ -2,14 +2,14 @@
 {"id":"9","name":"apple pie","description":"with cream or custard","price":"3.50","category":"pudding","available":"yes","_id":"3UrcZEQVHfTxXpdl"}
 {"id":"12","name":"lasagne","description":"with chips or garlic bread","price":"6.50","category":"main","available":"yes","_id":"3qCuAO39WJXJgbZw"}
 {"id":"4","name":"hot chocolate","description":"with fully fat or skimmed milk","price":"2.00","category":"drinks","available":"yes","_id":"5pu4Jqi0vDS5aHu7"}
-{"id":"17","name":"chips","description":"with ketchup or mayonnaise","price":"3","category":"side","available":"yes","_id":"6TbWSazxSbpdSiQX"}
+{"id":"17","name":"chips","description":"with ketchup or mayonnaise","price":"3.00","category":"side","available":"yes","_id":"6TbWSazxSbpdSiQX"}
 {"id":"14","name":"coffee","description":"freshly ground","price":"1.50","category":"drinks","available":"yes","_id":"8pkx2Y7HhoIXPfPY"}
 {"id":"2","name":"sandwiches","description":"with a variety of fillings","price":"2.50","category":"snack","available":"no","_id":"9c7tK2b2eyxCyiBo"}
-{"id":"15","name":"tea","description":"a range of varieties","price":"1","category":"drinks","available":"yes","_id":"AnNgkcyTetpvbXrW"}
+{"id":"15","name":"tea","description":"a range of varieties","price":"1.00","category":"drinks","available":"yes","_id":"AnNgkcyTetpvbXrW"}
 {"id":"13","name":"ice cream","description":"various flavours","price":"2.50","category":"pudding","available":"yes","_id":"C7lP2vvvx9D0kLNd"}
 {"id":"8","name":"baked potato","description":"with cheese, coleslaw, beans or tuna","price":"4.50","category":"main","available":"yes","_id":"ErCVlffIn96KDJjX"}
 {"id":"16","name":"pasta","description":"with a tomato and garlic sauce","price":"5.50","category":"main","available":"yes","_id":"FP3dYlzCyRLAE2Br"}
-{"id":"2","name":"sandwiches","description":"with a variety of fillings","price":"2.50","category":"snack","available":"no","_id":"GL8pxat3zIQqq3OK"}
+{"id":"2","name":"soup","description":"ask for todays special","price":"2.50","category":"snack","available":"no","_id":"GL8pxat3zIQqq3OK"}
 {"id":"18","name":"sparkling mineral water","description":"locally sourced","price":"1.5","category":"drinks","available":"yes","_id":"HpFEs4itbfBQJwzk"}
 {"id":"3","name":"salad","description":"uses seasonal local produce","price":"3.50","category":"side","available":"yes","_id":"JiABJqvIiRVlhpWK"}
 {"id":"7","name":"pizza","description":"ham and pineapple or four cheese","price":"5.00","category":"main","available":"yes","_id":"yJWOZxheka9vn1Qx"}
