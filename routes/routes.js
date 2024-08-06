@@ -14,6 +14,7 @@ router.get(
 );
 router.post(
   "/removeOrder",
+  passport.authenticate("jwt", { session: false }),
   controller.removeOrder
 );
 
