@@ -12,6 +12,11 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   controller.listOrders
 );
+router.post(
+  "/removeOrder",
+  controller.removeOrder
+);
+
 router.get(
   "/appData",
   passport.authenticate("jwt", { session: false }),

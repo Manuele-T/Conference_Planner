@@ -39,6 +39,16 @@ exports.addOrder = function (req, res) {
   res.redirect("/");
 };
 
+exports.removeOrder = function (req, res) {
+  console.log("got here: ");
+  console.log("req body: ", req.body[0]);
+let id = req.body[0]
+  order.removeEntry(id).catch((err) => {
+    console.log("promise rejected", err);
+  });
+  res.redirect("/");
+};
+
 exports.processLogin = function (req, res, next) {
   db.findOne({ username: req.body.username }, { _id: 1 }, function (err, user) {
     if (!user) {
