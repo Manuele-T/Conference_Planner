@@ -10,21 +10,18 @@ function TalksList() {
     const saved = JSON.parse(localStorage.getItem("bookmarks")) || [];
     return saved.filter((bookmark) => bookmark.userId === null);
   });
+  const [schedule, setSchedule] = useState(() => {
+    return JSON.parse(localStorage.getItem("schedule")) || [];
+  });
+  const [errorMessages, setErrorMessages] = useState({});
 
   useEffect(() => {
     fetch("http://localhost:3001/talks")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch talks");
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
         setTalks(data);
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      .catch((err) => console.error(err));
   }, []);
 
   const toggleBookmark = (talkId) => {
@@ -34,6 +31,31 @@ function TalksList() {
 
     setInterestedTalks(updatedBookmarks);
     localStorage.setItem("bookmarks", JSON.stringify(updatedBookmarks));
+  };
+
+  const toggleSchedule = (talk) => {
+    if (schedule.some((scheduledTalk) => scheduledTalk.id === talk.id)) {
+      // Remove from schedule
+      const updatedSchedule = schedule.filter((scheduledTalk) => scheduledTalk.id !== talk.id);
+      setSchedule(updatedSchedule);
+      setErrorMessages((prev) => ({ ...prev, [talk.id]: "" }));
+      localStorage.setItem("schedule", JSON.stringify(updatedSchedule));
+    } else if (schedule.some((scheduledTalk) => scheduledTalk.time === talk.time)) {
+      // Show time conflict error
+      setErrorMessages((prev) => ({
+        ...prev,
+        [talk.id]: `You already have a talk scheduled at ${talk.time}.`
+      }));
+      setTimeout(() => {
+        setErrorMessages((prev) => ({ ...prev, [talk.id]: "" }));
+      }, 3000);
+    } else {
+      // Add to schedule
+      const updatedSchedule = [...schedule, talk];
+      setSchedule(updatedSchedule);
+      localStorage.setItem("schedule", JSON.stringify(updatedSchedule));
+      setErrorMessages((prev) => ({ ...prev, [talk.id]: "" }));
+    }
   };
 
   const filteredTalks = talks.filter(
@@ -60,7 +82,10 @@ function TalksList() {
             key={talk.id}
             talk={talk}
             isBookmarked={interestedTalks.some((bookmark) => bookmark.talkId === talk.id)}
+            isScheduled={schedule.some((scheduledTalk) => scheduledTalk.id === talk.id)}
             toggleBookmark={toggleBookmark}
+            toggleSchedule={toggleSchedule}
+            errorMessage={errorMessages[talk.id] || ""}
           />
         ))}
       </ul>
