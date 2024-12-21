@@ -10,6 +10,7 @@ const conf = new confDAO({ filename: "conf.db", autoload: true });
 const users = new UserModel("users.db");
 
 // -------------------- User Authentication --------------------
+
 // Register User
 exports.registerUser = (req, res) => {
   const { username, password } = req.body;
@@ -62,9 +63,12 @@ exports.loginUser = (req, res) => {
           return res.status(400).json({ message: "Invalid credentials" });
         }
 
+        // Generate JWT and return userId in the response
         const token = jwt.sign({ id: user._id }, "your_secret_key", { expiresIn: "1h" });
         console.log("Login successful:", { username: user.username, token });
-        res.status(200).json({ token, username: user.username });
+
+        // Include userId so the frontend can store and associate it with user data
+        res.status(200).json({ token, username: user.username, userId: user._id });
       });
     })
     .catch((err) => {
@@ -74,7 +78,7 @@ exports.loginUser = (req, res) => {
 };
 
 // -------------------- Talks Endpoints --------------------
-// Ensure these match your confDAO methods:
+
 exports.listConf = (req, res) => {
   conf
     .getAllEntries()
