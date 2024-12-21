@@ -63,11 +63,10 @@ exports.loginUser = (req, res) => {
           return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        // Generate JWT and return userId in the response
         const token = jwt.sign({ id: user._id }, "your_secret_key", { expiresIn: "1h" });
         console.log("Login successful:", { username: user.username, token });
 
-        // Include userId so the frontend can store and associate it with user data
+        // Return userId so the frontend can store it
         res.status(200).json({ token, username: user.username, userId: user._id });
       });
     })
@@ -79,6 +78,7 @@ exports.loginUser = (req, res) => {
 
 // -------------------- Talks Endpoints --------------------
 
+// GET all talks
 exports.listConf = (req, res) => {
   conf
     .getAllEntries()
@@ -89,6 +89,7 @@ exports.listConf = (req, res) => {
     });
 };
 
+// GET talks by speaker
 exports.listOneSpeaker = (req, res) => {
   conf
     .getSpeaker(req.params.term)
@@ -99,6 +100,7 @@ exports.listOneSpeaker = (req, res) => {
     });
 };
 
+// GET talks by session
 exports.listSession = (req, res) => {
   conf
     .getSession(req.params.term)
@@ -109,6 +111,7 @@ exports.listSession = (req, res) => {
     });
 };
 
+// GET talks by time
 exports.listTime = (req, res) => {
   conf
     .getTime(req.params.term)
@@ -119,26 +122,45 @@ exports.listTime = (req, res) => {
     });
 };
 
+// GET ratings by talk ID (returns array of rating numbers)
 exports.listRatingsById = (req, res) => {
   conf
     .getTalkById(req.params.id)
-    .then((list) => res.json(list[0]?.ratings || []))
+    .then((talk) => {
+      if (!talk || !talk[0]) {
+        return res.json([]);
+      }
+      // 'ratings' is now an array of { rating, userId } objects
+      const ratingObjects = talk[0].ratings || [];
+      // Return just the numeric ratings so the front end can do average
+      const numericRatings = ratingObjects.map((r) => r.rating);
+      res.json(numericRatings);
+    })
     .catch((err) => {
       console.error("Error fetching ratings:", err);
       res.status(500).send("Internal server error");
     });
 };
 
+// GET ratings by speaker (optional, if needed)
 exports.listRatingsBySpeaker = (req, res) => {
   conf
     .getSpeaker(req.params.speaker)
-    .then((list) => res.json(list[0]?.ratings || []))
+    .then((list) => {
+      if (!list || !list[0]) {
+        return res.json([]);
+      }
+      const ratingObjects = list[0].ratings || [];
+      const numericRatings = ratingObjects.map((r) => r.rating);
+      res.json(numericRatings);
+    })
     .catch((err) => {
       console.error("Error fetching speaker ratings:", err);
       res.status(500).send("Internal server error");
     });
 };
 
+// GET rating via /talks/rate/:id/:rating (not used often, but in your code)
 exports.rateTalkById = (req, res) => {
   const { id, rating } = req.params;
 
@@ -147,20 +169,46 @@ exports.rateTalkById = (req, res) => {
   }
 
   conf
-    .rateTalkById(id, rating)
-    .then(() => {
-      console.log(`Rating ${rating} added for talk ${id}`);
-      res.status(201).send("Rating added successfully");
+    .getTalkById(id)
+    .then((talk) => {
+      if (!talk || talk.length === 0) {
+        return res.status(404).send("Talk not found");
+      }
+      // Convert rating to a number
+      const ratingNumber = parseInt(rating, 10);
+      talk[0].ratings = talk[0].ratings || [];
+      // If your existing data might have rating as numbers, now store them as objects
+      talk[0].ratings.push({ rating: ratingNumber, userId: null });
+
+      conf.conf.update(
+        { id },
+        { $set: { ratings: talk[0].ratings } },
+        {},
+        (err) => {
+          if (err) {
+            console.error("Failed to update ratings", err);
+            res.status(500).send("Failed to update ratings");
+          } else {
+            console.log(`Rating ${ratingNumber} added for talk ${id}`);
+            res.status(201).send("Rating added successfully");
+          }
+        }
+      );
     })
     .catch((err) => {
-      console.error("Failed to update ratings", err);
-      res.status(500).send("Failed to update ratings");
+      console.error("Error finding talk:", err);
+      res.status(500).send("Error finding talk");
     });
 };
 
+// POST rating with { talkId, rating, userId } in the body
 exports.handlePosts = (req, res) => {
-  const { talkId, rating } = req.body;
+  let { talkId, rating, userId } = req.body;
 
+  // If no userId provided, default to null
+  userId = userId || null;
+
+  rating = parseInt(rating, 10);
   if (!talkId || !rating || rating < 1 || rating > 5) {
     return res.status(400).send("Invalid rating data");
   }
@@ -172,8 +220,13 @@ exports.handlePosts = (req, res) => {
         return res.status(404).send("Talk not found");
       }
 
-      talk[0].ratings.push(rating);
+      // Convert existing ratings array to an array of objects if needed
+      talk[0].ratings = talk[0].ratings || [];
 
+      // Push the rating object
+      talk[0].ratings.push({ rating, userId });
+
+      // Update the DB
       conf.conf.update(
         { id: talkId },
         { $set: { ratings: talk[0].ratings } },
@@ -183,7 +236,7 @@ exports.handlePosts = (req, res) => {
             console.error("Failed to update ratings", err);
             res.status(500).send("Failed to update ratings");
           } else {
-            console.log(`Rating ${rating} added for talk ${talkId}`);
+            console.log(`Rating ${rating} added for talk ${talkId} by user ${userId}`);
             res.status(201).send("Rating added successfully");
           }
         }
