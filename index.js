@@ -20,6 +20,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')))
+const passport = require("passport");
+require("./auth/passportConfig")(passport); // Passport strategy
+
+app.use(passport.initialize());
+
+
 
 const router = require('./routes/routes');
 app.use('/', router);
