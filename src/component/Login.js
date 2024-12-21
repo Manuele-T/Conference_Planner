@@ -22,12 +22,20 @@ function Login({ setUser }) {
       console.log("Received login response:", data); // Log the raw data
 
       if (response.ok) {
-        // Save token and username in local storage
-        console.log("Login successful. Storing auth token and username...");
+        // Save token, username, and userId in local storage
+        console.log("Login successful. Storing auth token, username, userId...");
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("username", data.username);
+        // If you included userId from the server:
+        if (data.userId) {
+          localStorage.setItem("userId", data.userId);
+        } else {
+          // If the server didn't provide userId, explicitly set it to null
+          localStorage.setItem("userId", "null");
+        }
 
-        setUser(data.username); // Update global user state
+        // Update global user state (this is just the username for the top bar)
+        setUser(data.username);
         console.log("Global user state updated:", data.username);
 
         alert(`Login successful! Welcome, ${data.username}!`);

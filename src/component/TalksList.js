@@ -6,15 +6,28 @@ function TalksList() {
   const [talks, setTalks] = useState([]);
   const [filter, setFilter] = useState("");
   const [sessionFilter, setSessionFilter] = useState("");
-  const [interestedTalks, setInterestedTalks] = useState(() => {
-    const saved = JSON.parse(localStorage.getItem("bookmarks")) || [];
-    return saved.filter((bookmark) => bookmark.userId === null);
-  });
-  const [schedule, setSchedule] = useState(() => {
-    return JSON.parse(localStorage.getItem("schedule")) || [];
-  });
   const [errorMessages, setErrorMessages] = useState({});
 
+  // Retrieve current userId from localStorage. If not present, it's null.
+  const getCurrentUserId = () => localStorage.getItem("userId") || null;
+
+  // Initialize "bookmarks" from localStorage
+  const [interestedTalks, setInterestedTalks] = useState(() => {
+    const saved = JSON.parse(localStorage.getItem("bookmarks")) || [];
+    const userId = getCurrentUserId();
+    // Filter only those bookmarks that belong to the current user (or null if not logged in)
+    return saved.filter((bookmark) => bookmark.userId === userId);
+  });
+
+  // Initialize "schedule" from localStorage
+  const [schedule, setSchedule] = useState(() => {
+    const savedSchedule = JSON.parse(localStorage.getItem("schedule")) || [];
+    const userId = getCurrentUserId();
+    // Filter only schedule items for the current user (or null if not logged in)
+    return savedSchedule.filter((item) => item.userId === userId);
+  });
+
+  // Fetch all talks
   useEffect(() => {
     fetch("http://localhost:3001/talks")
       .then((response) => response.json())
@@ -24,23 +37,67 @@ function TalksList() {
       .catch((err) => console.error(err));
   }, []);
 
+  // Toggle a bookmark for the current user
   const toggleBookmark = (talkId) => {
-    const updatedBookmarks = interestedTalks.some((bookmark) => bookmark.talkId === talkId)
-      ? interestedTalks.filter((bookmark) => bookmark.talkId !== talkId)
-      : [...interestedTalks, { talkId, userId: null }];
+    const userId = getCurrentUserId();
+    // Current array of all bookmarks in localStorage
+    const allBookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
 
-    setInterestedTalks(updatedBookmarks);
-    localStorage.setItem("bookmarks", JSON.stringify(updatedBookmarks));
+    // Check if a bookmark exists for this user & talk
+    const alreadyBookmarked = interestedTalks.some(
+      (bookmark) => bookmark.talkId === talkId && bookmark.userId === userId
+    );
+
+    let updatedUserBookmarks;
+    let updatedAllBookmarks;
+
+    if (alreadyBookmarked) {
+      // Remove the bookmark from the user's local state
+      updatedUserBookmarks = interestedTalks.filter(
+        (bookmark) => !(bookmark.talkId === talkId && bookmark.userId === userId)
+      );
+      // Remove from the global "bookmarks" array
+      updatedAllBookmarks = allBookmarks.filter(
+        (bookmark) => !(bookmark.talkId === talkId && bookmark.userId === userId)
+      );
+    } else {
+      // Add a new bookmark with userId
+      const newBookmark = { talkId, userId };
+      updatedUserBookmarks = [...interestedTalks, newBookmark];
+      updatedAllBookmarks = [...allBookmarks, newBookmark];
+    }
+
+    // Update state and localStorage
+    setInterestedTalks(updatedUserBookmarks);
+    localStorage.setItem("bookmarks", JSON.stringify(updatedAllBookmarks));
   };
 
+  // Toggle a talk in the schedule for the current user
   const toggleSchedule = (talk) => {
-    if (schedule.some((scheduledTalk) => scheduledTalk.id === talk.id)) {
+    const userId = getCurrentUserId();
+    const allSchedules = JSON.parse(localStorage.getItem("schedule")) || [];
+
+    // Check if user already has this talk
+    const alreadyScheduled = schedule.some(
+      (item) => item.id === talk.id && item.userId === userId
+    );
+
+    if (alreadyScheduled) {
       // Remove from schedule
-      const updatedSchedule = schedule.filter((scheduledTalk) => scheduledTalk.id !== talk.id);
-      setSchedule(updatedSchedule);
+      const updatedUserSchedule = schedule.filter(
+        (item) => !(item.id === talk.id && item.userId === userId)
+      );
+      const updatedAllSchedule = allSchedules.filter(
+        (item) => !(item.id === talk.id && item.userId === userId)
+      );
+      setSchedule(updatedUserSchedule);
+      localStorage.setItem("schedule", JSON.stringify(updatedAllSchedule));
       setErrorMessages((prev) => ({ ...prev, [talk.id]: "" }));
-      localStorage.setItem("schedule", JSON.stringify(updatedSchedule));
-    } else if (schedule.some((scheduledTalk) => scheduledTalk.time === talk.time)) {
+    } else if (
+      schedule.some(
+        (item) => item.time === talk.time && item.userId === userId
+      )
+    ) {
       // Show time conflict error
       setErrorMessages((prev) => ({
         ...prev,
@@ -50,14 +107,18 @@ function TalksList() {
         setErrorMessages((prev) => ({ ...prev, [talk.id]: "" }));
       }, 3000);
     } else {
-      // Add to schedule
-      const updatedSchedule = [...schedule, talk];
-      setSchedule(updatedSchedule);
-      localStorage.setItem("schedule", JSON.stringify(updatedSchedule));
+      // Add to schedule for this user
+      const talkWithUserId = { ...talk, userId };
+      const updatedUserSchedule = [...schedule, talkWithUserId];
+      const updatedAllSchedule = [...allSchedules, talkWithUserId];
+
+      setSchedule(updatedUserSchedule);
+      localStorage.setItem("schedule", JSON.stringify(updatedAllSchedule));
       setErrorMessages((prev) => ({ ...prev, [talk.id]: "" }));
     }
   };
 
+  // Apply filters to talk list
   const filteredTalks = talks.filter(
     (talk) =>
       (!sessionFilter || talk.session === sessionFilter) &&
@@ -77,17 +138,28 @@ function TalksList() {
         sessions={sessions}
       />
       <ul>
-        {filteredTalks.map((talk) => (
-          <TalkItem
-            key={talk.id}
-            talk={talk}
-            isBookmarked={interestedTalks.some((bookmark) => bookmark.talkId === talk.id)}
-            isScheduled={schedule.some((scheduledTalk) => scheduledTalk.id === talk.id)}
-            toggleBookmark={toggleBookmark}
-            toggleSchedule={toggleSchedule}
-            errorMessage={errorMessages[talk.id] || ""}
-          />
-        ))}
+        {filteredTalks.map((talk) => {
+          // Check if this talk is bookmarked or scheduled by current user
+          const isBookmarked = interestedTalks.some(
+            (bookmark) =>
+              bookmark.talkId === talk.id && bookmark.userId === getCurrentUserId()
+          );
+          const isScheduled = schedule.some(
+            (item) => item.id === talk.id && item.userId === getCurrentUserId()
+          );
+
+          return (
+            <TalkItem
+              key={talk.id}
+              talk={talk}
+              isBookmarked={isBookmarked}
+              isScheduled={isScheduled}
+              toggleBookmark={toggleBookmark}
+              toggleSchedule={toggleSchedule}
+              errorMessage={errorMessages[talk.id] || ""}
+            />
+          );
+        })}
       </ul>
     </div>
   );

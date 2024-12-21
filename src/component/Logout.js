@@ -5,8 +5,14 @@ function Logout({ setUser }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("authToken"); // Remove token
-    setUser(null); // Reset user state
+    // Remove all user-related data from localStorage
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+
+    // Reset global user state
+    setUser(null);
+
     alert("You have been logged out.");
     navigate("/login"); // Redirect to login page
   }, [navigate, setUser]);

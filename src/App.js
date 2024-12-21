@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import TalksList from "./component/TalksList";
 import SpeechesOfInterest from "./component/SpeechesOfInterest";
@@ -9,7 +9,16 @@ import Logout from "./component/Logout";
 import ProtectedRoute from "./component/ProtectedRoute";
 
 function App() {
-  const [user, setUser] = useState(null); // Manage logged-in user state
+  const [user, setUser] = useState(null); // Manage logged-in username
+
+  // On mount, see if there's a "username" in localStorage 
+  // (in case the user had previously logged in and refreshed).
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUser(storedUsername);
+    }
+  }, []);
 
   return (
     <BrowserRouter>
@@ -28,18 +37,9 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<TalksList />} />
         <Route path="/speeches-of-interest" element={<SpeechesOfInterest />} />
+        <Route path="/speeches-to-attend" element={<SpeechesToAttend />} /> {/* <--- No ProtectedRoute */}
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Protected Routes */}
-        <Route
-          path="/speeches-to-attend"
-          element={
-            <ProtectedRoute>
-              <SpeechesToAttend />
-            </ProtectedRoute>
-          }
-        />
 
         {/* Logout Route */}
         <Route path="/logout" element={<Logout setUser={setUser} />} />
