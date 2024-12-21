@@ -9,20 +9,29 @@ function TalkItem({
   isScheduled,
   errorMessage,
 }) {
+  // Helper to read current userId or "null" if not logged in
+  const getCurrentUserId = () => localStorage.getItem("userId") || "null";
+
   const [averageRating, setAverageRating] = useState(0);
+
+  // Determine this user's rating from localStorage on mount
   const [userRating, setUserRating] = useState(() => {
     const savedRatings = JSON.parse(localStorage.getItem("ratings")) || [];
-    const userRating = savedRatings.find(
-      (rating) => rating.talkId === talk.id && rating.userId === null
+    const currentUserId = getCurrentUserId();
+
+    // Find rating matching (talkId, userId)
+    const existing = savedRatings.find(
+      (r) => r.talkId === talk.id && r.userId === currentUserId
     );
-    return userRating ? userRating.rating : 0;
+    return existing ? existing.rating : 0;
   });
 
-  // Fetch average rating from the backend (wrapped in useCallback)
+  // Fetch the average rating from the backend
   const fetchAverageRating = useCallback(() => {
     fetch(`http://localhost:3001/talks/${talk.id}/ratingById`)
       .then((response) => response.json())
       .then((data) => {
+        // data is an array of numeric ratings
         const avg = data.length
           ? (data.reduce((sum, rate) => sum + rate, 0) / data.length).toFixed(1)
           : 0;
@@ -32,32 +41,42 @@ function TalkItem({
   }, [talk.id]);
 
   useEffect(() => {
-    fetchAverageRating(); // Fetch when the component mounts
+    fetchAverageRating(); // Fetch average rating on mount
   }, [fetchAverageRating]);
 
-  // Handle Rating Submission
+  // Handle rating submission
   const handleRating = (rating) => {
     if (rating === userRating) return; // Prevent duplicate submission
 
     setUserRating(rating);
 
-    // Update Local Storage
-    const savedRatings = JSON.parse(localStorage.getItem("ratings")) || [];
-    const updatedRatings = savedRatings.filter(
-      (r) => !(r.talkId === talk.id && r.userId === null)
-    );
-    updatedRatings.push({ talkId: talk.id, rating, userId: null });
-    localStorage.setItem("ratings", JSON.stringify(updatedRatings));
+    // Current userId
+    const currentUserId = getCurrentUserId();
 
-    // Send Rating to Backend
+    // Update localStorage
+    const savedRatings = JSON.parse(localStorage.getItem("ratings")) || [];
+    // Remove old rating from this user for this talk
+    const filteredRatings = savedRatings.filter(
+      (r) => !(r.talkId === talk.id && r.userId === currentUserId)
+    );
+    // Add new rating
+    filteredRatings.push({ talkId: talk.id, rating, userId: currentUserId });
+    localStorage.setItem("ratings", JSON.stringify(filteredRatings));
+
+    // Send rating to backend (POST /posts)
+    // Make sure your server expects { talkId, rating, userId }
     fetch("http://localhost:3001/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ talkId: talk.id, rating }),
+      body: JSON.stringify({
+        talkId: talk.id,
+        rating,
+        userId: currentUserId !== "null" ? currentUserId : null,
+      }),
     })
-      .then(() => fetchAverageRating()) // Update average rating after posting
+      .then(() => fetchAverageRating()) // Re-fetch average rating
       .catch((err) => console.error("Failed to post rating", err));
   };
 

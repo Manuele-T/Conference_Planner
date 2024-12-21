@@ -19,22 +19,20 @@ function Login({ setUser }) {
       });
 
       const data = await response.json();
-      console.log("Received login response:", data); // Log the raw data
+      console.log("Received login response:", data);
 
       if (response.ok) {
-        // Save token, username, and userId in local storage
+        // Save token, username, userId to local storage
         console.log("Login successful. Storing auth token, username, userId...");
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("username", data.username);
-        // If you included userId from the server:
         if (data.userId) {
           localStorage.setItem("userId", data.userId);
         } else {
-          // If the server didn't provide userId, explicitly set it to null
           localStorage.setItem("userId", "null");
         }
 
-        // Update global user state (this is just the username for the top bar)
+        // Update global user state (top bar)
         setUser(data.username);
         console.log("Global user state updated:", data.username);
 
