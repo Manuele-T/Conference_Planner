@@ -3,7 +3,7 @@ const passport = require("passport"); // Ensure this is imported
 const router = express.Router();
 const controller = require("../controllers/controllers");
 
-// Route Definitions
+// Routes
 router.get("/talks", controller.listConf);
 router.get('/talks/speaker/:term', controller.listOneSpeaker);
 router.get('/talks/session/:term', controller.listSession);
@@ -12,7 +12,6 @@ router.get('/talks/:speaker/rating', controller.listRatingsBySpeaker);
 router.get('/talks/:id/ratingById', controller.listRatingsById);
 router.get('/talks/rate/:id/:rating', controller.rateTalkById);
 router.post('/posts', controller.handlePosts);
-
 router.post("/register", controller.registerUser);
 router.post("/login", controller.loginUser);
 

@@ -5,7 +5,7 @@ const conf = new confDAO({ filename: "users.db", autoload: true });
 
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "your_secret_key", // Replace with process.env.JWT_SECRET
+  secretOrKey: "your_secret_key",
 };
 
 module.exports = (passport) => {
