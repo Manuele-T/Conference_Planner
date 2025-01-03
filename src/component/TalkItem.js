@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import StarRating from "./StarRating";
+import { Accordion } from "react-bootstrap";
 
 function TalkItem({
   talk,
@@ -81,48 +82,49 @@ function TalkItem({
   };
 
   return (
-    <li
-      style={{
-        marginBottom: "20px",
-        border: "1px solid #ddd",
-        padding: "15px",
-        borderRadius: "5px",
-      }}
-    >
-      <h2>{talk.title}</h2>
-      <p>
-        <strong>Speaker:</strong> {talk.speaker}
-      </p>
-      <p>
-        <strong>Description:</strong> {talk.description}
-      </p>
-      <p>
-        <strong>Time:</strong> {talk.time}
-      </p>
-      <p>
-        <strong>Session:</strong> {talk.session}
-      </p>
-      <p>
-        <strong>Tags:</strong> {talk.tags.join(", ")}
-      </p>
-      {errorMessage && (
-        <p style={{ color: "red", fontWeight: "bold" }}>{errorMessage}</p>
-      )}
+    <Accordion.Item eventKey={talk.id}>
+      <Accordion.Header>{talk.title}</Accordion.Header>
+      <Accordion.Body>
+        <p>
+          <strong>Speaker:</strong> {talk.speaker}
+        </p>
+        <p>
+          <strong>Description:</strong> {talk.description}
+        </p>
+        <p>
+          <strong>Time:</strong> {talk.time}
+        </p>
+        <p>
+          <strong>Session:</strong> {talk.session}
+        </p>
+        <p>
+          <strong>Tags:</strong> {talk.tags.join(", ")}
+        </p>
+        {errorMessage && (
+          <p style={{ color: "red", fontWeight: "bold" }}>{errorMessage}</p>
+        )}
 
-      <button onClick={() => toggleBookmark(talk.id)}>
-        {isBookmarked ? "Unmark as Interested" : "Mark as Interested"}
-      </button>
-      <button onClick={() => toggleSchedule(talk)}>
-        {isScheduled ? "Remove from Your Schedule" : "Add to Your Schedule"}
-      </button>
+        <button
+          className="btn btn-primary"
+          onClick={() => toggleBookmark(talk.id)}
+        >
+          {isBookmarked ? "Unmark as Interested" : "Mark as Interested"}
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => toggleSchedule(talk)}
+        >
+          {isScheduled ? "Remove from Your Schedule" : "Add to Your Schedule"}
+        </button>
 
-      <h3>Your Rating</h3>
-      <StarRating currentRating={userRating} onRate={handleRating} />
+        <h3>Your Rating</h3>
+        <StarRating currentRating={userRating} onRate={handleRating} />
 
-      <p>
-        <strong>Average Rating:</strong> {averageRating} ⭐
-      </p>
-    </li>
+        <p>
+          <strong>Average Rating:</strong> {averageRating} ⭐
+        </p>
+      </Accordion.Body>
+    </Accordion.Item>
   );
 }
 

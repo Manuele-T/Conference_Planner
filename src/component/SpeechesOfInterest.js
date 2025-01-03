@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Accordion } from "react-bootstrap";
 
 function SpeechesOfInterest() {
   // Helper to get current userId or null
@@ -32,30 +33,32 @@ function SpeechesOfInterest() {
   );
 
   return (
-    <div>
-      <h1>Speeches of Interest</h1>
-      <ul>
+    <div className="container">
+      <h1 className="text-center my-4">Speeches of Interest</h1>
+      <Accordion>
         {talksOfInterest.map((talk) => (
-          <li key={talk.id}>
-            <h2>{talk.title}</h2>
-            <p>
-              <strong>Speaker:</strong> {talk.speaker}
-            </p>
-            <p>
-              <strong>Description:</strong> {talk.description}
-            </p>
-            <p>
-              <strong>Time:</strong> {talk.time}
-            </p>
-            <p>
-              <strong>Session:</strong> {talk.session}
-            </p>
-            <p>
-              <strong>Tags:</strong> {talk.tags.join(", ")}
-            </p>
-          </li>
+          <Accordion.Item eventKey={talk.id} key={talk.id}>
+            <Accordion.Header>{talk.title}</Accordion.Header>
+            <Accordion.Body>
+              <p>
+                <strong>Speaker:</strong> {talk.speaker}
+              </p>
+              <p>
+                <strong>Description:</strong> {talk.description}
+              </p>
+              <p>
+                <strong>Time:</strong> {talk.time}
+              </p>
+              <p>
+                <strong>Session:</strong> {talk.session}
+              </p>
+              <p>
+                <strong>Tags:</strong> {talk.tags.join(", ")}
+              </p>
+            </Accordion.Body>
+          </Accordion.Item>
         ))}
-      </ul>
+      </Accordion>
     </div>
   );
 }

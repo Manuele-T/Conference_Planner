@@ -7,6 +7,8 @@ import Login from "./component/Login";
 import Register from "./component/Register";
 import Logout from "./component/Logout";
 import ProtectedRoute from "./component/ProtectedRoute";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
   const [user, setUser] = useState(null); // Manage logged-in username

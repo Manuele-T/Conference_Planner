@@ -30,31 +30,35 @@ function Register() {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <form onSubmit={handleRegister} style={{ maxWidth: "400px", margin: "0 auto" }}>
-        <div style={{ marginBottom: "10px" }}>
-          <label>Username:</label>
+    <div className="container">
+      <h1 className="text-center my-4">Register</h1>
+      <form
+        onSubmit={handleRegister}
+        className="mx-auto"
+        style={{ maxWidth: "400px" }}
+      >
+        <div className="mb-3">
+          <label className="form-label">Username:</label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px" }}
+            className="form-control"
           />
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label>Password:</label>
+        <div className="mb-3">
+          <label className="form-label">Password:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px" }}
+            className="form-control"
           />
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" style={{ padding: "10px", width: "100%" }}>
+        {error && <p className="text-danger">{error}</p>}
+        <button type="submit" className="btn btn-primary w-100">
           Register
         </button>
       </form>

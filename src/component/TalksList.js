@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Filters from "./Filters";
 import TalkItem from "./TalkItem";
+import { Accordion } from "react-bootstrap";
 
 function TalksList() {
   const [talks, setTalks] = useState([]);
@@ -54,11 +55,13 @@ function TalksList() {
     if (alreadyBookmarked) {
       // Remove the bookmark from the user's local state
       updatedUserBookmarks = interestedTalks.filter(
-        (bookmark) => !(bookmark.talkId === talkId && bookmark.userId === userId)
+        (bookmark) =>
+          !(bookmark.talkId === talkId && bookmark.userId === userId)
       );
       // Remove from the global "bookmarks" array
       updatedAllBookmarks = allBookmarks.filter(
-        (bookmark) => !(bookmark.talkId === talkId && bookmark.userId === userId)
+        (bookmark) =>
+          !(bookmark.talkId === talkId && bookmark.userId === userId)
       );
     } else {
       // Add a new bookmark with userId
@@ -94,14 +97,12 @@ function TalksList() {
       localStorage.setItem("schedule", JSON.stringify(updatedAllSchedule));
       setErrorMessages((prev) => ({ ...prev, [talk.id]: "" }));
     } else if (
-      schedule.some(
-        (item) => item.time === talk.time && item.userId === userId
-      )
+      schedule.some((item) => item.time === talk.time && item.userId === userId)
     ) {
       // Show time conflict error
       setErrorMessages((prev) => ({
         ...prev,
-        [talk.id]: `You already have a talk scheduled at ${talk.time}.`
+        [talk.id]: `You already have a talk scheduled at ${talk.time}.`,
       }));
       setTimeout(() => {
         setErrorMessages((prev) => ({ ...prev, [talk.id]: "" }));
@@ -137,12 +138,12 @@ function TalksList() {
         setSessionFilter={setSessionFilter}
         sessions={sessions}
       />
-      <ul>
+      <Accordion>
         {filteredTalks.map((talk) => {
-          // Check if this talk is bookmarked or scheduled by current user
           const isBookmarked = interestedTalks.some(
             (bookmark) =>
-              bookmark.talkId === talk.id && bookmark.userId === getCurrentUserId()
+              bookmark.talkId === talk.id &&
+              bookmark.userId === getCurrentUserId()
           );
           const isScheduled = schedule.some(
             (item) => item.id === talk.id && item.userId === getCurrentUserId()
@@ -160,7 +161,7 @@ function TalksList() {
             />
           );
         })}
-      </ul>
+      </Accordion>
     </div>
   );
 }
