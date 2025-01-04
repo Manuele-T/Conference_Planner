@@ -26,11 +26,7 @@ function Login({ setUser }) {
         console.log("Login successful. Storing auth token, username, userId...");
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("username", data.username);
-        if (data.userId) {
-          localStorage.setItem("userId", data.userId);
-        } else {
-          localStorage.setItem("userId", "null");
-        }
+        localStorage.setItem("userId", data.userId);
 
         // Update global user state (top bar)
         setUser(data.username);

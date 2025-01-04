@@ -46,40 +46,44 @@ function TalkItem({
   }, [fetchAverageRating]);
 
   // Handle rating submission
-  const handleRating = (rating) => {
-    if (rating === userRating) return; // Prevent duplicate submission
+  // Handle rating submission
+const handleRating = (rating) => {
+  const currentUserId = getCurrentUserId();
+  if (currentUserId === "null") {
+    alert("You must be logged in to rate.");
+    return; // Prevent voting for not logged-in users
+  }
 
-    setUserRating(rating);
+  if (rating === userRating) return; // Prevent duplicate submission
 
-    // Current userId
-    const currentUserId = getCurrentUserId();
+  setUserRating(rating);
 
-    // Update localStorage
-    const savedRatings = JSON.parse(localStorage.getItem("ratings")) || [];
-    // Remove old rating from this user for this talk
-    const filteredRatings = savedRatings.filter(
-      (r) => !(r.talkId === talk.id && r.userId === currentUserId)
-    );
-    // Add new rating
-    filteredRatings.push({ talkId: talk.id, rating, userId: currentUserId });
-    localStorage.setItem("ratings", JSON.stringify(filteredRatings));
+  // Update localStorage
+  const savedRatings = JSON.parse(localStorage.getItem("ratings")) || [];
+  // Remove old rating from this user for this talk
+  const filteredRatings = savedRatings.filter(
+    (r) => !(r.talkId === talk.id && r.userId === currentUserId)
+  );
+  // Add new rating
+  filteredRatings.push({ talkId: talk.id, rating, userId: currentUserId });
+  localStorage.setItem("ratings", JSON.stringify(filteredRatings));
 
-    // Send rating to backend (POST /posts)
-    // Make sure your server expects { talkId, rating, userId }
-    fetch("http://localhost:3001/posts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        talkId: talk.id,
-        rating,
-        userId: currentUserId !== "null" ? currentUserId : null,
-      }),
-    })
-      .then(() => fetchAverageRating()) // Re-fetch average rating
-      .catch((err) => console.error("Failed to post rating", err));
-  };
+  // Send rating to backend
+  fetch("http://localhost:3001/posts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      talkId: talk.id,
+      rating,
+      userId: currentUserId,
+    }),
+  })
+    .then(() => fetchAverageRating()) // Re-fetch average rating
+    .catch((err) => console.error("Failed to post rating", err));
+};
+
 
   return (
     <Accordion.Item eventKey={talk.id}>

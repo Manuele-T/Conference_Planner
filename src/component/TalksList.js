@@ -9,7 +9,7 @@ function TalksList() {
   const [sessionFilter, setSessionFilter] = useState("");
   const [errorMessages, setErrorMessages] = useState({});
 
-  // Retrieve current userId from localStorage. If not present, it's null.
+  // Retrieve current userId from localStorage. If not logged-in, it's "null".
   const getCurrentUserId = () => localStorage.getItem("userId") || null;
 
   // Initialize "bookmarks" from localStorage
