@@ -1,10 +1,8 @@
 const nedb = require("gray-nedb");
-
 class UserModel {
   constructor(filePath) {
     this.db = new nedb({ filename: filePath, autoload: true });
   }
-
   // Add a user to the database
   addUser(user) {
     return new Promise((resolve, reject) => {
@@ -14,7 +12,6 @@ class UserModel {
       });
     });
   }
-
   // Get a user by their username
   getUserByUsername(username) {
     return new Promise((resolve, reject) => {
@@ -25,5 +22,4 @@ class UserModel {
     });
   }
 }
-
 module.exports = UserModel;
