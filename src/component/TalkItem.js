@@ -15,19 +15,19 @@ function TalkItem({
 
   const [averageRating, setAverageRating] = useState(0);
 
-  // Determine this user's rating from localStorage on mount
+  // Determine the user's rating from localStorage
   const [userRating, setUserRating] = useState(() => {
     const savedRatings = JSON.parse(localStorage.getItem("ratings")) || [];
     const currentUserId = getCurrentUserId();
 
-    // Find rating matching (talkId, userId)
+    // Find matching rating (talkId, userId)
     const existing = savedRatings.find(
       (r) => r.talkId === talk.id && r.userId === currentUserId
     );
     return existing ? existing.rating : 0;
   });
 
-  // Fetch the average rating from the backend
+  // Fetch average rating from the backend
   const fetchAverageRating = useCallback(() => {
     fetch(`http://localhost:3001/talks/${talk.id}/ratingById`)
       .then((response) => response.json())
@@ -46,15 +46,14 @@ function TalkItem({
   }, [fetchAverageRating]);
 
   // Handle rating submission
-  // Handle rating submission
 const handleRating = (rating) => {
   const currentUserId = getCurrentUserId();
   if (currentUserId === "null") {
     alert("You must be logged in to rate.");
     return; // Prevent voting for not logged-in users
   }
-
-  if (rating === userRating) return; // Prevent duplicate submission
+  // Prevent duplicate submissions
+  if (rating === userRating) return;
 
   setUserRating(rating);
 
@@ -84,7 +83,7 @@ const handleRating = (rating) => {
     .catch((err) => console.error("Failed to post rating", err));
 };
 
-
+  // Render an accordion item for a talk with details, actions, and ratings
   return (
     <Accordion.Item eventKey={talk.id}>
       <Accordion.Header>{talk.title}</Accordion.Header>

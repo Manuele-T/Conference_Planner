@@ -14,7 +14,6 @@ function App() {
   const [user, setUser] = useState(null); // Manage logged-in username
 
   // On mount, see if there's a "username" in localStorage
-  // (in case the user had previously logged in and refreshed).
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
@@ -22,6 +21,7 @@ function App() {
     }
   }, []);
 
+  // Main routing setup for the application
   return (
     <BrowserRouter>
       <div className="top-bar">
@@ -50,7 +50,10 @@ function App() {
       <div className="container-wrapper">
         <Routes>
           <Route path="/" element={<TalksList />} />
-          <Route path="/speeches-of-interest" element={<SpeechesOfInterest />} />
+          <Route
+            path="/speeches-of-interest"
+            element={<SpeechesOfInterest />}
+          />
           <Route path="/speeches-to-attend" element={<SpeechesToAttend />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
           <Route path="/register" element={<Register />} />
@@ -59,7 +62,6 @@ function App() {
       </div>
     </BrowserRouter>
   );
-  
 }
 
 export default App;

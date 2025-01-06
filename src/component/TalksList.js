@@ -16,7 +16,7 @@ function TalksList() {
   const [interestedTalks, setInterestedTalks] = useState(() => {
     const saved = JSON.parse(localStorage.getItem("bookmarks")) || [];
     const userId = getCurrentUserId();
-    // Filter only those bookmarks that belong to the current user (or null if not logged in)
+    // Filter only bookmarks that belong to the current user (or null if not logged in)
     return saved.filter((bookmark) => bookmark.userId === userId);
   });
 

@@ -1,6 +1,7 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-e4we3-dom";
 
+// Redirects to login if user is not authenticated
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("authToken");
 

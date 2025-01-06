@@ -40,10 +40,10 @@
 .top-bar {
   padding: 10px;
   display: flex;
-  justify-content: space-between; /* Ensures items are on opposite ends */
-  align-items: center; /* Centers items vertically */
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #ccc;
-  background-color: rgba(255, 255, 255, 0.95); /* 95% opaque */
+  background-color: rgba(255, 255, 255, 0.95);
 }
 body {
   background-image: url('/public/images/conference.jpg');
@@ -55,11 +55,11 @@ body {
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.95); /* 95% opaque white */
+  background: rgba(255, 255, 255, 0.95);
   border: 2px solid #ccc;
   border-radius: 10px;
   padding: 20px;
-  margin: 40px auto; /* Increase the margin for more background space */
-  max-width: 960px; /* Reduce the max-width for a narrower container */
+  margin: 40px auto;
+  max-width: 960px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
