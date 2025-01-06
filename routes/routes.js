@@ -15,7 +15,8 @@ router.post('/posts', controller.handlePosts);
 router.post("/register", controller.registerUser);
 router.post("/login", controller.loginUser);
 
-// Protected Example Route
+/*
+Protected Route Example - not implemented
 router.get(
   "/profile",
   passport.authenticate("jwt", { session: false }),
@@ -23,6 +24,7 @@ router.get(
     res.json({ message: `Welcome, ${req.user.username}` });
   }
 );
+*/
 
 // Handle 404 Errors
 router.use((req, res) => {
