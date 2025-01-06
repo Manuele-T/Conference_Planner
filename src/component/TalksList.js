@@ -129,7 +129,7 @@ function TalksList() {
   const sessions = [...new Set(talks.map((talk) => talk.session))];
 
   return (
-    <div>
+    <div className="container">
       <h1>Talks</h1>
       <Filters
         filter={filter}

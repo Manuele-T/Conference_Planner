@@ -6,14 +6,14 @@ import SpeechesToAttend from "./component/SpeechesToAttend";
 import Login from "./component/Login";
 import Register from "./component/Register";
 import Logout from "./component/Logout";
-import ProtectedRoute from "./component/ProtectedRoute";
-import 'bootstrap/dist/css/bootstrap.min.css';
-
+// import ProtectedRoute from "./component/ProtectedRoute";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null); // Manage logged-in username
 
-  // On mount, see if there's a "username" in localStorage 
+  // On mount, see if there's a "username" in localStorage
   // (in case the user had previously logged in and refreshed).
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -24,30 +24,42 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div style={{ padding: "10px", display: "flex", gap: "15px", borderBottom: "1px solid #ccc" }}>
-        <span style={{ marginRight: "auto", fontWeight: "bold" }}>
+      <div className="top-bar">
+        <span className="welcome-text">
           {user ? `Welcome, ${user}` : "You are not logged in"}
         </span>
-        <Link to="/" style={{ textDecoration: "none", fontWeight: "bold" }}>Talks</Link>
-        <Link to="/speeches-of-interest" style={{ textDecoration: "none", fontWeight: "bold" }}>Speeches of Interest</Link>
-        <Link to="/speeches-to-attend" style={{ textDecoration: "none", fontWeight: "bold" }}>Your Schedule</Link>
-        <Link to="/login" style={{ textDecoration: "none", fontWeight: "bold" }}>Login</Link>
-        <Link to="/register" style={{ textDecoration: "none", fontWeight: "bold" }}>Register</Link>
-        <Link to="/logout" style={{ textDecoration: "none", fontWeight: "bold" }}>Logout</Link>
+        <Link className="nav-link" to="/">
+          Talks
+        </Link>
+        <Link className="nav-link" to="/speeches-of-interest">
+          Speeches of Interest
+        </Link>
+        <Link className="nav-link" to="/speeches-to-attend">
+          Your Schedule
+        </Link>
+        <Link className="nav-link" to="/login">
+          Login
+        </Link>
+        <Link className="nav-link" to="/register">
+          Register
+        </Link>
+        <Link className="nav-link" to="/logout">
+          Logout
+        </Link>
       </div>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<TalksList />} />
-        <Route path="/speeches-of-interest" element={<SpeechesOfInterest />} />
-        <Route path="/speeches-to-attend" element={<SpeechesToAttend />} /> {/* <--- No ProtectedRoute */}
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register />} />
-
-        {/* Logout Route */}
-        <Route path="/logout" element={<Logout setUser={setUser} />} />
-      </Routes>
+      <div className="container-wrapper">
+        <Routes>
+          <Route path="/" element={<TalksList />} />
+          <Route path="/speeches-of-interest" element={<SpeechesOfInterest />} />
+          <Route path="/speeches-to-attend" element={<SpeechesToAttend />} />
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/logout" element={<Logout setUser={setUser} />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
+  
 }
 
 export default App;
