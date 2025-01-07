@@ -16,9 +16,9 @@ class UserModel {
   }
 
   // Get a user by their username
-  getUserByUsername(username) {
+  getUserByField(query) {
     return new Promise((resolve, reject) => {
-      this.db.findOne({ username }, (err, user) => {
+      this.db.findOne(query, (err, user) => {
         if (err) reject(err); // Reject the promise on error
         else resolve(user); // Resolve with the found user or null if not found
       });

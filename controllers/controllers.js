@@ -7,6 +7,12 @@ const jwt = require("jsonwebtoken");
 const conf = new confDAO({ filename: "conf.db", autoload: true });
 const users = new UserModel("users.db");
 
+// Create list again if needed
+exports.newList = function (req, res) {
+  conf.init();
+  res.redirect("/");
+};
+
 // Register User
 exports.registerUser = (req, res) => {
   const { username, password } = req.body;
@@ -16,7 +22,7 @@ exports.registerUser = (req, res) => {
   }
 
   // Check if the username already exists
-  users.getUserByUsername(username)
+  users.getUserByField({ username })
     .then((existingUser) => {
       if (existingUser) {
         // If username exists, send an error message
@@ -50,16 +56,16 @@ exports.registerUser = (req, res) => {
 
 // Login User
 exports.loginUser = (req, res) => {
-  const { username, password } = req.body; 
+  const { username, password } = req.body;
 
-  // Log the login attempt with details 
+  // Log the login attempt with details
   console.log("Login attempt:", {
     username,
-    passwordProvided: Boolean(password), 
+    passwordProvided: Boolean(password),
   });
 
   users
-    .getUserByUsername(username) // Fetch user by username from the database
+    .getUserByField({ username }) // Replace getUserByUsername
     .then((user) => {
       console.log("User found in DB:", user); // Log the user data if found
       if (!user) {
@@ -90,7 +96,7 @@ exports.loginUser = (req, res) => {
       });
     })
     .catch((err) => {
-      console.error("Error during getUserByUsername:", err); // Log any errors during database query
+      console.error("Error during getUserByField:", err); // Log any errors during database query
       res.status(500).json({ message: "Login failed" }); // Respond with 500 on database error
     });
 };

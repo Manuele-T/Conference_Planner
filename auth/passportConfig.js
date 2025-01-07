@@ -1,10 +1,11 @@
 // Import required modules
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
-const confDAO = require("../models/confModel");
+const UserModel = require("../models/userModel");
 
-// Initialize the DAO for interacting with the users database
-const conf = new confDAO({ filename: "users.db", autoload: true });
+// Initialize the const for interacting with the users database
+const users = new UserModel("users.db");
+console.log({ filename: "users.db", autoload: true });
 
 // Set options for the JWT strategy
 const options = {
@@ -14,10 +15,10 @@ const options = {
 
 // Export JWT strategy configuration
 module.exports = (passport) => {
-  // Configure  JWT strategy
+  // Configure JWT strategy
   passport.use(
     new JwtStrategy(options, (jwt_payload, done) => {
-      conf.getUserById(jwt_payload.id) // Fetch user by ID from the database
+      users.getUserByField({ _id: jwt_payload.id }) // Use getUserByField to fetch user by ID
         .then((user) => {
           if (user) {
             return done(null, user); // User found

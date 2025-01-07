@@ -26,6 +26,8 @@ router.get(
 );
 */
 
+// router.get("/setup", controller.newList);
+
 // Handle 404 Errors
 router.use((req, res) => {
   res.status(404);
