@@ -171,8 +171,8 @@ class Conf {
   getAllEntries() {
     return new Promise((resolve, reject) => {
       this.conf.find({}, (err, entries) => {
-        if (err) reject(err); // Reject if there's an error
-        else resolve(entries); // Resolve with all entries
+        if (err) reject(err);
+        else resolve(entries);
       });
     });
   }
