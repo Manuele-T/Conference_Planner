@@ -1,10 +1,14 @@
 # Conference Event Planner
 
+![01](./screenshots/01.jpg)
+
 ## Overview
 
 This application is a responsive single-page application (SPA) designed to enhance the experience of technology conference attendees. The application provides a comprehensive platform for users to explore conference schedules, discover talks and presenters, and meticulously plan their event itinerary. The primary goal is to offer an intuitive and efficient tool for attendees to manage their time, prioritize sessions, and engage with the conference content effectively.
 
 ---
+
+![02](./screenshots/02.jpg)
 
 ## Key Features
 
@@ -19,7 +23,11 @@ This application is a responsive single-page application (SPA) designed to enhan
 
 ---
 
+![03](./screenshots/03.jpg)
+
 ## Technology Stack
+
+
 
 This application leverages modern web technologies to deliver a dynamic and user-friendly experience:
 
